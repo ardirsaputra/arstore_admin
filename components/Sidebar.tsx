@@ -6,6 +6,8 @@ const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: "📊" },
   { href: "/devices", label: "Perangkat", icon: "📱" },
   { href: "/codes", label: "Kode Lisensi", icon: "🔑" },
+  { href: "/products", label: "Produk & Jasa", icon: "🛍️" },
+  { href: "/releases", label: "Rilis Aplikasi", icon: "📦" },
   { href: "/payment-info", label: "Info Pembayaran", icon: "💳" },
   { href: "/feature-requests", label: "Permintaan Fitur", icon: "💬" },
 ];

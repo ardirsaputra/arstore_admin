@@ -63,6 +63,42 @@ CREATE TABLE IF NOT EXISTS feature_requests (
 
 CREATE INDEX IF NOT EXISTS idx_feature_requests_read ON feature_requests(read);
 
+-- ── App releases (APK download page) ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS app_releases (
+  id           SERIAL PRIMARY KEY,
+  version_name VARCHAR(50)  NOT NULL,              -- "1.2.3"
+  version_code INTEGER      NOT NULL,              -- monotonically increasing
+  apk_url      TEXT         NOT NULL,              -- direct APK download link
+  changelog    JSONB        NOT NULL DEFAULT '[]', -- ["Fix A", "Add B"]
+  features     JSONB        NOT NULL DEFAULT '[]', -- feature bullet points
+  screenshots  JSONB        NOT NULL DEFAULT '[]', -- image URLs
+  min_android  VARCHAR(100) NOT NULL DEFAULT 'Android 7.0+',
+  file_size    VARCHAR(50),                        -- "28 MB"
+  is_published BOOLEAN      NOT NULL DEFAULT FALSE,
+  release_date TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_releases_published ON app_releases(is_published, release_date DESC);
+
+-- ── Products & Services ───────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS products (
+  id          SERIAL PRIMARY KEY,
+  name        VARCHAR(255) NOT NULL,
+  category    VARCHAR(50)  NOT NULL,   -- 'rental' | 'development'
+  description TEXT,
+  price       NUMERIC(12,0) NOT NULL DEFAULT 0,  -- IDR, no decimal
+  duration    VARCHAR(100),            -- e.g. "1 bulan", "Seumur hidup", NULL for project-based
+  features    JSONB        NOT NULL DEFAULT '[]', -- array of feature strings
+  image_url   TEXT,
+  is_active   BOOLEAN      NOT NULL DEFAULT TRUE,
+  sort_order  INTEGER      NOT NULL DEFAULT 0,
+  created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_products_category  ON products(category);
+CREATE INDEX IF NOT EXISTS idx_products_is_active ON products(is_active);
+
 -- ── Admin users ──────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS admin_users (
   id            SERIAL PRIMARY KEY,

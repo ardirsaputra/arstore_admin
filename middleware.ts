@@ -5,6 +5,8 @@ const PROTECTED = [
   "/dashboard",
   "/devices",
   "/codes",
+  "/products",
+  "/releases",
   "/payment-info",
   "/feature-requests",
 ];
@@ -33,6 +35,8 @@ export const config = {
     "/dashboard/:path*",
     "/devices/:path*",
     "/codes/:path*",
+    "/products/:path*",
+    "/releases/:path*",
     "/payment-info/:path*",
     "/feature-requests/:path*",
     "/api/admin/:path*",
