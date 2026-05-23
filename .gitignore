@@ -1,0 +1,45 @@
+# ── Flutter ───────────────────────────────────────────────────────────────────
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+doc/api/
+
+# Flutter web build output
+web/canvaskit/
+
+# Dart analysis
+*.dart.snapshot
+
+# ── Backend (Node.js) ─────────────────────────────────────────────────────────
+backend/node_modules/
+backend/.env
+backend/*.log
+
+# ── IDE & OS ──────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ── Next.js ───────────────────────────────────────────────────────────────────
+.next/
+out/
+node_modules/
+.env.local
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+*.log
+*.lock
+!pubspec.lock
