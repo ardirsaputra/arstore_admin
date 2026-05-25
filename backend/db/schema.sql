@@ -106,3 +106,17 @@ CREATE TABLE IF NOT EXISTS admin_users (
   password_hash VARCHAR(255) NOT NULL,  -- bcrypt(12)
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- ── Announcements (pengumuman dari admin ke pengguna aplikasi) ────────────────
+CREATE TABLE IF NOT EXISTS announcements (
+  id         SERIAL PRIMARY KEY,
+  title      VARCHAR(255) NOT NULL,
+  body       TEXT         NOT NULL,
+  type       VARCHAR(50)  NOT NULL DEFAULT 'info',  -- info | warning | promo
+  is_active  BOOLEAN      NOT NULL DEFAULT TRUE,
+  starts_at  TIMESTAMPTZ,   -- NULL = always active from creation
+  ends_at    TIMESTAMPTZ,   -- NULL = no expiry
+  created_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_announcements_active ON announcements(is_active, ends_at);

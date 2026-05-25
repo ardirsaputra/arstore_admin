@@ -121,6 +121,18 @@ const I = {
       <line x1="21" y1="12" x2="9" y2="12" strokeLinecap="round" />
     </svg>
   ),
+  Announce: (
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.75}
+    >
+      <path d="M22 8.5C22 5.46 19.54 3 16.5 3S11 5.46 11 8.5c0 2.34 1.43 4.35 3.5 5.2V21l2-2 2 2v-7.3c2.07-.85 3.5-2.86 3.5-5.2z" strokeLinejoin="round" />
+      <path d="M6 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h3l4 3V9l-4 3z" strokeLinejoin="round" />
+    </svg>
+  ),
 };
 
 type NavItem = {
@@ -131,12 +143,13 @@ type NavItem = {
 };
 
 const NAV: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", iconKey: "Dashboard" },
-  { href: "/devices", label: "Perangkat", iconKey: "Devices" },
-  { href: "/codes", label: "Kode Lisensi", iconKey: "Keys" },
-  { href: "/products", label: "Produk & Jasa", iconKey: "Products" },
-  { href: "/releases", label: "Rilis Aplikasi", iconKey: "Releases" },
-  { href: "/payment-info", label: "Info Pembayaran", iconKey: "Payment" },
+  { href: "/dashboard",        label: "Dashboard",         iconKey: "Dashboard" },
+  { href: "/devices",          label: "Perangkat",          iconKey: "Devices" },
+  { href: "/codes",            label: "Kode Lisensi",       iconKey: "Keys" },
+  { href: "/products",         label: "Produk & Jasa",      iconKey: "Products" },
+  { href: "/releases",         label: "Rilis Aplikasi",     iconKey: "Releases" },
+  { href: "/announcements",    label: "Pengumuman",         iconKey: "Announce" },
+  { href: "/payment-info",     label: "Info Pembayaran",    iconKey: "Payment" },
   {
     href: "/feature-requests",
     label: "Permintaan Fitur",

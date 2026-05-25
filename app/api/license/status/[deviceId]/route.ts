@@ -20,6 +20,9 @@ export async function GET(
     }
 
     const json = toStatusJson(rows[0]);
+    if (!json) {
+      return NextResponse.json({ success: false, message: "Data tidak valid" }, { status: 500 });
+    }
 
     // Sinkronkan status ke DB jika sudah expired
     if (json.status !== rows[0].status) {
@@ -33,6 +36,7 @@ export async function GET(
     }
 
     return NextResponse.json(json);
+
   } catch (err) {
     console.error("Status error:", err);
     return NextResponse.json(
