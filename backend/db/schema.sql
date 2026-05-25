@@ -120,3 +120,32 @@ CREATE TABLE IF NOT EXISTS announcements (
 );
 
 CREATE INDEX IF NOT EXISTS idx_announcements_active ON announcements(is_active, ends_at);
+
+-- ── App Users (pengguna aplikasi untuk sistem lisensi) ─────────────────────
+CREATE TABLE IF NOT EXISTS app_users (
+  id               SERIAL PRIMARY KEY,
+  email            VARCHAR(255) UNIQUE NOT NULL,
+  password_hash    VARCHAR(255) NOT NULL,
+  active_device_id VARCHAR(255),
+  status           VARCHAR(50)  NOT NULL DEFAULT 'trial',
+  trial_start_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  expiry_date      TIMESTAMPTZ,
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_app_users_email ON app_users(email);
+CREATE INDEX IF NOT EXISTS idx_app_users_device ON app_users(active_device_id);
+
+-- ── License Requests (pengajuan perpanjangan/pembelian) ───────────────────
+CREATE TABLE IF NOT EXISTS license_requests (
+  id               SERIAL PRIMARY KEY,
+  user_id          INTEGER NOT NULL REFERENCES app_users(id) ON DELETE CASCADE,
+  requested_months INTEGER NOT NULL,
+  proof_image      TEXT,
+  status           VARCHAR(50) NOT NULL DEFAULT 'pending',
+  admin_note       TEXT,
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_license_req_status ON license_requests(status);

@@ -146,6 +146,7 @@ const NAV: NavItem[] = [
   { href: "/dashboard",        label: "Dashboard",         iconKey: "Dashboard" },
   { href: "/devices",          label: "Perangkat",          iconKey: "Devices" },
   { href: "/codes",            label: "Kode Lisensi",       iconKey: "Keys" },
+  { href: "/license-requests", label: "Request Lisensi",    iconKey: "Payment" },
   { href: "/products",         label: "Produk & Jasa",      iconKey: "Products" },
   { href: "/releases",         label: "Rilis Aplikasi",     iconKey: "Releases" },
   { href: "/announcements",    label: "Pengumuman",         iconKey: "Announce" },
