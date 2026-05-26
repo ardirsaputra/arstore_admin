@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 import { getAdminFromRequest } from "@/lib/auth";
 
+function parseJsonArray(val: unknown) {
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (e) {}
+  }
+  return [];
+}
+
 function toReleaseJson(row: Record<string, unknown>) {
   return {
     id: row.id,
@@ -11,9 +22,9 @@ function toReleaseJson(row: Record<string, unknown>) {
     apk_url_arm64: row.apk_url_arm64 ?? null,
     apk_url_arm32: row.apk_url_arm32 ?? null,
     apk_url_x86: row.apk_url_x86 ?? null,
-    changelog: Array.isArray(row.changelog) ? row.changelog : [],
-    features: Array.isArray(row.features) ? row.features : [],
-    screenshots: Array.isArray(row.screenshots) ? row.screenshots : [],
+    changelog: parseJsonArray(row.changelog),
+    features: parseJsonArray(row.features),
+    screenshots: parseJsonArray(row.screenshots),
     min_android: row.min_android,
     file_size: row.file_size ?? null,
     is_published: row.is_published,

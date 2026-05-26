@@ -61,7 +61,7 @@ export default function ReleasesPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const res = await fetch("/api/admin/releases");
+    const res = await fetch(`/api/admin/releases?t=${Date.now()}`, { cache: 'no-store' });
     const data = await res.json();
     setReleases(Array.isArray(data) ? data : []);
     setLoading(false);
@@ -170,7 +170,7 @@ export default function ReleasesPage() {
   }
 
   async function togglePublish(r: AppRelease) {
-    await fetch(`/api/admin/releases/${r.id}`, {
+    const res = await fetch(`/api/admin/releases/${r.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -182,6 +182,10 @@ export default function ReleasesPage() {
         screenshotsText: "",
       }),
     });
+    if (!res.ok) {
+      const d = await res.json();
+      alert(d.message || "Gagal mengubah status rilis");
+    }
     load();
   }
 
