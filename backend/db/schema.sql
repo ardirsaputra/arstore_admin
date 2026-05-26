@@ -79,6 +79,11 @@ CREATE TABLE IF NOT EXISTS app_releases (
   created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- Add missing columns if they don't exist yet
+ALTER TABLE app_releases ADD COLUMN IF NOT EXISTS apk_url_arm64 TEXT;
+ALTER TABLE app_releases ADD COLUMN IF NOT EXISTS apk_url_arm32 TEXT;
+ALTER TABLE app_releases ADD COLUMN IF NOT EXISTS apk_url_x86 TEXT;
+
 CREATE INDEX IF NOT EXISTS idx_releases_published ON app_releases(is_published, release_date DESC);
 
 -- ── Products & Services ───────────────────────────────────────────────────────

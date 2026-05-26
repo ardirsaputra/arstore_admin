@@ -6,6 +6,9 @@ type ReleaseForm = Omit<AppRelease, "id" | "created_at"> & {
   changelogText: string;
   featuresText: string;
   screenshotsText: string;
+  apk_url_arm64: string;
+  apk_url_arm32: string;
+  apk_url_x86: string;
 };
 
 function emptyForm(): ReleaseForm {
@@ -13,6 +16,9 @@ function emptyForm(): ReleaseForm {
     version_name: "",
     version_code: 1,
     apk_url: "",
+    apk_url_arm64: "",
+    apk_url_arm32: "",
+    apk_url_x86: "",
     changelog: [],
     features: [],
     screenshots: [],
@@ -77,6 +83,9 @@ export default function ReleasesPage() {
       version_name: r.version_name,
       version_code: r.version_code,
       apk_url: r.apk_url,
+      apk_url_arm64: r.apk_url_arm64 ?? "",
+      apk_url_arm32: r.apk_url_arm32 ?? "",
+      apk_url_x86: r.apk_url_x86 ?? "",
       changelog: r.changelog,
       features: r.features,
       screenshots: r.screenshots,
@@ -107,8 +116,8 @@ export default function ReleasesPage() {
       setError("Nama versi wajib diisi");
       return;
     }
-    if (!form.apk_url.trim()) {
-      setError("URL APK wajib diisi");
+    if (!form.apk_url.trim() || !form.apk_url_arm64.trim() || !form.apk_url_arm32.trim() || !form.apk_url_x86.trim()) {
+      setError("Semua URL APK (Universal, ARM64, ARM32, x86) wajib diisi");
       return;
     }
     setSaving(true);
@@ -118,6 +127,9 @@ export default function ReleasesPage() {
       version_name: form.version_name,
       version_code: form.version_code,
       apk_url: form.apk_url,
+      apk_url_arm64: form.apk_url_arm64,
+      apk_url_arm32: form.apk_url_arm32,
+      apk_url_x86: form.apk_url_x86,
       changelog: parseLines(form.changelogText),
       features: parseLines(form.featuresText),
       screenshots: parseLines(form.screenshotsText),
@@ -317,14 +329,47 @@ export default function ReleasesPage() {
                 </Field>
               </div>
 
-              <Field label="URL APK (link unduhan langsung) *">
+              <Field label="URL APK (Universal / Fallback) *">
                 <input
                   value={form.apk_url}
                   onChange={(e) =>
                     setForm({ ...form, apk_url: e.target.value })
                   }
                   className={INPUT}
-                  placeholder="https://drive.google.com/... atau https://..."
+                  placeholder="https://...app-universal.apk"
+                />
+              </Field>
+
+              <Field label="URL APK (arm64-v8a) *">
+                <input
+                  value={form.apk_url_arm64}
+                  onChange={(e) =>
+                    setForm({ ...form, apk_url_arm64: e.target.value })
+                  }
+                  className={INPUT}
+                  placeholder="https://...app-arm64.apk"
+                />
+              </Field>
+
+              <Field label="URL APK (armeabi-v7a) *">
+                <input
+                  value={form.apk_url_arm32}
+                  onChange={(e) =>
+                    setForm({ ...form, apk_url_arm32: e.target.value })
+                  }
+                  className={INPUT}
+                  placeholder="https://...app-arm32.apk"
+                />
+              </Field>
+
+              <Field label="URL APK (x86_64) *">
+                <input
+                  value={form.apk_url_x86}
+                  onChange={(e) =>
+                    setForm({ ...form, apk_url_x86: e.target.value })
+                  }
+                  className={INPUT}
+                  placeholder="https://...app-x86.apk"
                 />
               </Field>
 

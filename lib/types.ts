@@ -15,6 +15,9 @@ export type AppRelease = {
   version_name: string;
   version_code: number;
   apk_url: string;
+  apk_url_arm64: string | null;
+  apk_url_arm32: string | null;
+  apk_url_x86: string | null;
   changelog: string[];
   features: string[];
   screenshots: string[];

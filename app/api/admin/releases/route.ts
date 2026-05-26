@@ -8,6 +8,9 @@ function toReleaseJson(row: Record<string, unknown>) {
     version_name: row.version_name,
     version_code: row.version_code,
     apk_url: row.apk_url,
+    apk_url_arm64: row.apk_url_arm64 ?? null,
+    apk_url_arm32: row.apk_url_arm32 ?? null,
+    apk_url_x86: row.apk_url_x86 ?? null,
     changelog: Array.isArray(row.changelog) ? row.changelog : [],
     features: Array.isArray(row.features) ? row.features : [],
     screenshots: Array.isArray(row.screenshots) ? row.screenshots : [],
@@ -48,6 +51,9 @@ export async function POST(req: NextRequest) {
       version_name,
       version_code,
       apk_url,
+      apk_url_arm64,
+      apk_url_arm32,
+      apk_url_x86,
       changelog,
       features,
       screenshots,
@@ -57,20 +63,30 @@ export async function POST(req: NextRequest) {
       release_date,
     } = body;
 
-    if (!version_name || !version_code || !apk_url) {
+    if (
+      !version_name ||
+      !version_code ||
+      !apk_url ||
+      !apk_url_arm64 ||
+      !apk_url_arm32 ||
+      !apk_url_x86
+    ) {
       return NextResponse.json(
-        { message: "version_name, version_code, dan apk_url wajib diisi" },
+        { message: "version_name, version_code, dan semua link APK (Universal, ARM64, ARM32, x86) wajib diisi" },
         { status: 400 },
       );
     }
 
     const rows = await sql`
       INSERT INTO app_releases
-        (version_name, version_code, apk_url, changelog, features, screenshots, min_android, file_size, is_published, release_date)
+        (version_name, version_code, apk_url, apk_url_arm64, apk_url_arm32, apk_url_x86, changelog, features, screenshots, min_android, file_size, is_published, release_date)
       VALUES (
         ${version_name},
         ${Number(version_code)},
         ${apk_url},
+        ${apk_url_arm64 || null},
+        ${apk_url_arm32 || null},
+        ${apk_url_x86 || null},
         ${JSON.stringify(Array.isArray(changelog) ? changelog : [])}::jsonb,
         ${JSON.stringify(Array.isArray(features) ? features : [])}::jsonb,
         ${JSON.stringify(Array.isArray(screenshots) ? screenshots : [])}::jsonb,
