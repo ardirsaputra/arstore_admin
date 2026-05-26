@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 // scripts/db-init.js — Initialize NeonDB schema and default admin user
-// Usage: node scripts/db-init.js
-// Requires DATABASE_URL, ADMIN_USERNAME, ADMIN_PASSWORD env vars (set in .env.local)
+// Usage: npm run db:init (Will be run automatically on Vercel build)
 
 require("dotenv").config({ path: ".env.local" });
 const { neon } = require("@neondatabase/serverless");
@@ -11,48 +10,65 @@ const path = require("path");
 
 async function main() {
   if (!process.env.DATABASE_URL) {
-    console.error(
-      "ERROR: DATABASE_URL tidak di-set. Buat file .env.local terlebih dahulu.",
-    );
-    process.exit(1);
+    console.warn("WARNING: DATABASE_URL not set. Skipping DB migration.");
+    return;
   }
 
   const sql = neon(process.env.DATABASE_URL);
 
   // Run schema
-  const schema = fs.readFileSync(
-    path.join(__dirname, "../backend/db/schema.sql"),
-    "utf-8",
-  );
-  // Split by semicolons and run each statement
-  const statements = schema
+  const schemaPath = path.join(__dirname, "../backend/db/schema.sql");
+  if (!fs.existsSync(schemaPath)) {
+    console.error(`ERROR: Schema file not found at ${schemaPath}`);
+    return;
+  }
+
+  const schemaRaw = fs.readFileSync(schemaPath, "utf-8");
+  
+  // Strip single-line SQL comments before splitting
+  const statements = schemaRaw
+    .split("\n")
+    .map((line) => {
+      const idx = line.indexOf("--");
+      return idx === -1 ? line : line.slice(0, idx);
+    })
+    .join("\n")
     .split(";")
     .map((s) => s.trim())
     .filter((s) => s.length > 0);
+
+  console.log("⏳ Running schema migrations...");
   for (const stmt of statements) {
     try {
-      await sql.query(stmt);
+      await sql(stmt);
     } catch (e) {
       console.warn("Warning:", e.message);
     }
   }
   console.log("✅ Schema berhasil dijalankan");
 
-  // Create default admin user
+  // Create default admin user if provided
   const username = process.env.ADMIN_USERNAME || "admin";
   const password = process.env.ADMIN_PASSWORD;
   if (!password) {
-    console.error("ERROR: ADMIN_PASSWORD tidak di-set");
-    process.exit(1);
+    console.log("ℹ️ No ADMIN_PASSWORD provided in ENV. Skipping default admin creation.");
+    console.log("🎉 Database ready!");
+    return;
   }
 
-  const hash = await bcrypt.hash(password, 12);
-  await sql`
-    INSERT INTO admin_users (username, password_hash)
-    VALUES (${username}, ${hash})
-    ON CONFLICT (username) DO UPDATE SET password_hash = ${hash}
-  `;
-  console.log(`✅ Admin user '${username}' berhasil dibuat/diperbarui`);
+  try {
+    const hash = await bcrypt.hash(password, 12);
+    // Neon HTTP requires using the tagged template for parameterized queries
+    await sql`
+      INSERT INTO admin_users (username, password_hash)
+      VALUES (${username}, ${hash})
+      ON CONFLICT (username) DO UPDATE SET password_hash = ${hash}
+    `;
+    console.log(`✅ Admin user '${username}' berhasil dibuat/diperbarui`);
+  } catch (e) {
+    console.error("Error creating admin user:", e.message);
+  }
+  
   console.log("🎉 Database siap digunakan!");
 }
 
