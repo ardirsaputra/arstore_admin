@@ -98,14 +98,55 @@ export default function DownloadPage() {
                 </div>
               </div>
 
-              <a
-                href={release.apk_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 bg-brand-600 hover:bg-brand-500 text-white px-8 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 shadow-lg shadow-brand-900/50"
-              >
-                ⬇ Unduh APK
-              </a>
+              <div className="shrink-0 flex flex-col gap-3 min-w-[240px]">
+                {release.apk_url_arm64 && (
+                  <a
+                    href={release.apk_url_arm64}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-brand-600 hover:bg-brand-500 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-900/50"
+                  >
+                    ⬇ Unduh APK (ARM64)
+                    <span className="text-[10px] font-normal opacity-80 block -mt-1 leading-none">Untuk HP Modern</span>
+                  </a>
+                )}
+                
+                {release.apk_url_arm32 && (
+                  <a
+                    href={release.apk_url_arm32}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors flex flex-col items-center justify-center gap-1 border border-gray-700"
+                  >
+                    <span>⬇ Unduh APK (ARM32)</span>
+                    <span className="text-[10px] font-normal opacity-70">Untuk HP Keluaran Lama</span>
+                  </a>
+                )}
+
+                {release.apk_url_x86 && (
+                  <a
+                    href={release.apk_url_x86}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors flex flex-col items-center justify-center gap-1 border border-gray-700"
+                  >
+                    <span>⬇ Unduh APK (x86)</span>
+                    <span className="text-[10px] font-normal opacity-70">Untuk Emulator PC</span>
+                  </a>
+                )}
+
+                {release.apk_url && (
+                  <a
+                    href={release.apk_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors flex flex-col items-center justify-center gap-1 border border-gray-700"
+                  >
+                    <span>⬇ Unduh APK (Universal)</span>
+                    <span className="text-[10px] font-normal opacity-70">Cocok untuk Semua Perangkat (Lebih Besar)</span>
+                  </a>
+                )}
+              </div>
             </div>
           </div>
 
@@ -197,16 +238,58 @@ export default function DownloadPage() {
           )}
 
           {/* Bottom CTA */}
-          <div className="text-center py-8">
-            <a
-              href={release.apk_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white px-10 py-4 rounded-2xl font-semibold text-base transition-colors shadow-xl shadow-brand-900/50"
-            >
-              ⬇ Unduh APK v{release.version_name}
-            </a>
-            <p className="text-gray-500 text-xs mt-3">
+          <div className="text-center py-8 border-t border-gray-800">
+            <h2 className="text-xl font-bold mb-6">Pilih Versi APK</h2>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 flex-wrap">
+              {release.apk_url_arm64 && (
+                <a
+                  href={release.apk_url_arm64}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-brand-600 hover:bg-brand-500 text-white px-8 py-4 rounded-2xl font-semibold text-sm transition-colors flex flex-col items-center justify-center gap-1 shadow-xl shadow-brand-900/50 min-w-[220px]"
+                >
+                  <span>⬇ Unduh (ARM64)</span>
+                  <span className="text-[11px] font-normal opacity-80">Untuk HP Modern</span>
+                </a>
+              )}
+
+              {release.apk_url_arm32 && (
+                <a
+                  href={release.apk_url_arm32}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl font-semibold text-sm transition-colors flex flex-col items-center justify-center gap-1 border border-gray-700 min-w-[220px]"
+                >
+                  <span>⬇ Unduh (ARM32)</span>
+                  <span className="text-[11px] font-normal opacity-70">Untuk HP Lama</span>
+                </a>
+              )}
+              
+              {release.apk_url_x86 && (
+                <a
+                  href={release.apk_url_x86}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl font-semibold text-sm transition-colors flex flex-col items-center justify-center gap-1 border border-gray-700 min-w-[220px]"
+                >
+                  <span>⬇ Unduh (x86)</span>
+                  <span className="text-[11px] font-normal opacity-70">Untuk Emulator PC</span>
+                </a>
+              )}
+
+              {release.apk_url && (
+                <a
+                  href={release.apk_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl font-semibold text-sm transition-colors flex flex-col items-center justify-center gap-1 border border-gray-700 min-w-[220px]"
+                >
+                  <span>⬇ Unduh (Universal)</span>
+                  <span className="text-[11px] font-normal opacity-70">Semua Perangkat</span>
+                </a>
+              )}
+            </div>
+            <p className="text-gray-500 text-xs mt-6">
               {release.file_size && `${release.file_size} · `}
               {release.min_android} · Gratis
             </p>
