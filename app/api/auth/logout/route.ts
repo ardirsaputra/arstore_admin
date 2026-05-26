@@ -6,3 +6,5 @@ export async function POST() {
   res.cookies.set({ ...AUTH_COOKIE, value: "", maxAge: 0 });
   return res;
 }
+
+export const dynamic = 'force-dynamic';

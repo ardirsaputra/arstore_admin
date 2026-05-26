@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminFromRequest } from "@/lib/auth";
 
 const PROTECTED = [
   "/dashboard",
@@ -19,8 +18,11 @@ export function middleware(req: NextRequest) {
 
   if (!isProtected && !isAdminApi) return NextResponse.next();
 
-  const admin = getAdminFromRequest(req);
-  if (!admin) {
+  // Edge runtime does not support jsonwebtoken, so we just check for cookie presence here.
+  // Real token verification happens securely in the Node.js API routes.
+  const hasToken = req.cookies.has("arstore_admin_token");
+  
+  if (!hasToken) {
     if (isAdminApi) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }

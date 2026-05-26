@@ -74,3 +74,5 @@ export async function DELETE(
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
+
+export const dynamic = 'force-dynamic';

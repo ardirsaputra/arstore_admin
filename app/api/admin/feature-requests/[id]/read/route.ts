@@ -14,3 +14,5 @@ export async function PATCH(
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
+
+export const dynamic = 'force-dynamic';
