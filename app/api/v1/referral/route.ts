@@ -25,6 +25,22 @@ function generateCode(): string {
   return result;
 }
 
+function deterministicCode(deviceId: string): string {
+  // Generate a stable 6-char suffix from device ID hash
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let hash = 5381;
+  for (let i = 0; i < deviceId.length; i++) {
+    hash = (hash * 33) ^ deviceId.charCodeAt(i);
+    hash = hash >>> 0; // keep as unsigned 32-bit int
+  }
+  let suffix = "";
+  for (let i = 0; i < 6; i++) {
+    suffix += chars[hash % chars.length];
+    hash = Math.floor(hash / chars.length) + i;
+  }
+  return "UTK-" + suffix;
+}
+
 export async function GET(req: NextRequest) {
   try {
     if (!migrationRan) {
@@ -41,15 +57,24 @@ export async function GET(req: NextRequest) {
 
     // Find the device
     const devices = await sql`SELECT * FROM devices WHERE device_id = ${deviceId}`;
+
+    // If device not yet registered (no trial started), generate a deterministic preview code
+    // This code won't be claimable until the device registers, but it shows something to the user.
     if (devices.length === 0) {
-      return NextResponse.json({ error: "Device not found" }, { status: 404 });
+      const previewCode = deterministicCode(deviceId);
+      return NextResponse.json({
+        success: true,
+        referralCode: previewCode,
+        hasClaimedReferral: false,
+        isPreview: true, // Indicates device isn't registered yet
+      });
     }
 
     let code = devices[0].referral_code;
     const hasClaimed = devices[0].has_claimed_referral;
 
     if (!code) {
-      // Generate a unique code
+      // Generate a unique code and save to DB
       while (true) {
         code = generateCode();
         try {
@@ -57,7 +82,6 @@ export async function GET(req: NextRequest) {
           break;
         } catch (e: any) {
           if (e.code === '23505') {
-            // Unique constraint violation, try again
             continue;
           }
           throw e;
