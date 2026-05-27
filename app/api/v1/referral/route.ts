@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
     const ownerDevice = ownerDevices[0];
 
     // 4. Check if max uses reached (50 uses)
-    if (ownerDevice.referral_uses >= 50) {
+    if (ownerDevice.referral_uses >= 15) {
       return NextResponse.json({ error: "Referral code has reached maximum usage limit." }, { status: 400 });
     }
 
