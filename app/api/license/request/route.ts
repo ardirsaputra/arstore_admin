@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
+import { sendTelegramNotification } from "@/lib/telegram";
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,6 +42,17 @@ export async function POST(req: NextRequest) {
       INSERT INTO license_requests (user_id, requested_months, proof_image, status)
       VALUES (${userId}, ${requestedMonths}, ${proofImage}, 'pending')
     `;
+
+    // Send Telegram notification to admin
+    const telegramMessage = 
+      `🚨 <b>Pengajuan Langganan Baru</b>\n\n` +
+      `👤 <b>Pengguna:</b> ${user.email}\n` +
+      `📦 <b>Paket:</b> ${requestedMonths} Bulan\n` +
+      `🕒 <b>Waktu:</b> ${new Date().toLocaleString('id-ID')}\n\n` +
+      `Silakan login ke dashboard admin untuk memeriksa bukti transfer dan menyetujui langganan ini.`;
+    
+    // Don't await if we want to return immediately
+    sendTelegramNotification(telegramMessage).catch(console.error);
 
     return NextResponse.json({ success: true, message: "Pengajuan berhasil dikirim" });
   } catch (error: any) {
