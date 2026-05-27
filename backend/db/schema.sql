@@ -2,6 +2,13 @@
 -- Run via: psql $DATABASE_URL -f db/schema.sql
 -- Or paste into Neon Console SQL Editor
 
+-- ── App Config (Dynamic configurations for UtilitasKu App) ────────────────────
+CREATE TABLE IF NOT EXISTS app_config (
+  key        VARCHAR(100) PRIMARY KEY,
+  value      JSONB NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- ── Devices (registered mobile app installations) ────────────────────────────
 CREATE TABLE IF NOT EXISTS devices (
   id              SERIAL PRIMARY KEY,

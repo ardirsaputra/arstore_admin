@@ -43,6 +43,7 @@ app.use(
 app.use("/api/license", require("./routes/mobile-license"));
 app.use("/api/feature-requests", require("./routes/feature-requests"));
 app.use("/api/payment-info", require("./routes/payment-info"));
+app.use("/api/app-config", require("./routes/app-config"));
 
 // Admin auth (no JWT guard on this router itself)
 app.use("/api/admin/auth", require("./routes/admin-auth"));
