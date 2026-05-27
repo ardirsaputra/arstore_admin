@@ -1,13 +1,45 @@
 "use client";
 import { useState, useEffect } from "react";
 
-// Daftar ID tool yang tersedia di aplikasi UtilitasKu
+// Daftar ID tool beserta nama fiturnya yang tersedia di aplikasi UtilitasKu
 const AVAILABLE_TOOLS = [
-  "downloader", "status_wa", "video_editor", "audio_editor", "video_compress", "audio_convert",
-  "manga", "video_player", "music_player", "img_compress", "img_convert", "bg_remover", "kanvas",
-  "foto_pdf", "pdf_foto", "gabung_pdf", "pisah_pdf", "baca_pdf", "office", "speed_test", "fake_gps",
-  "alarm_baterai", "vpn", "zip", "kompas", "scan_qr", "buat_qr", "direct_wa", "browser",
-  "catatan_aman", "catatan", "noise_meter", "scan_teks", "apk_extractor", "wifi_analyzer", "info_hp"
+  { id: "downloader", name: "Downloader" },
+  { id: "status_wa", name: "Status WA" },
+  { id: "video_editor", name: "Video Editor" },
+  { id: "audio_editor", name: "Audio Editor" },
+  { id: "video_compress", name: "Kompres Video" },
+  { id: "audio_convert", name: "Konversi Audio" },
+  { id: "manga", name: "Manga Reader" },
+  { id: "video_player", name: "Pemutar Video" },
+  { id: "music_player", name: "Pemutar Musik" },
+  { id: "img_compress", name: "Kompres Gambar" },
+  { id: "img_convert", name: "Konversi Gambar" },
+  { id: "bg_remover", name: "Penghapus Background" },
+  { id: "kanvas", name: "Kanvas Gambar" },
+  { id: "foto_pdf", name: "Foto ke PDF" },
+  { id: "pdf_foto", name: "PDF ke Foto" },
+  { id: "gabung_pdf", name: "Gabung PDF" },
+  { id: "pisah_pdf", name: "Pisah PDF" },
+  { id: "baca_pdf", name: "Pembaca PDF" },
+  { id: "office", name: "Office Reader" },
+  { id: "speed_test", name: "Speed Test" },
+  { id: "fake_gps", name: "Fake GPS" },
+  { id: "alarm_baterai", name: "Alarm Baterai" },
+  { id: "vpn", name: "VPN WARP" },
+  { id: "zip", name: "Ekstrak ZIP" },
+  { id: "kompas", name: "Kompas" },
+  { id: "scan_qr", name: "Scan QR/Barcode" },
+  { id: "buat_qr", name: "Pembuat QR" },
+  { id: "direct_wa", name: "Direct WhatsApp" },
+  { id: "browser", name: "Browser AdBlock" },
+  { id: "catatan_aman", name: "Catatan Aman" },
+  { id: "catatan", name: "Catatan Biasa" },
+  { id: "noise_meter", name: "Noise Meter" },
+  { id: "scan_teks", name: "Scan Teks (OCR)" },
+  { id: "apk_extractor", name: "APK Extractor" },
+  { id: "wifi_analyzer", name: "WiFi Analyzer" },
+  { id: "info_hp", name: "Info Perangkat" },
+  { id: "settings", name: "Pengaturan" }
 ];
 
 export default function ToolsConfigPage() {
@@ -83,25 +115,30 @@ export default function ToolsConfigPage() {
       </p>
 
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {AVAILABLE_TOOLS.map(tool => {
-            const isDisabled = disabledTools.includes(tool);
+            const isDisabled = disabledTools.includes(tool.id);
             return (
               <label 
-                key={tool} 
-                className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                key={tool.id} 
+                className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
                   isDisabled ? "bg-red-950/20 border-red-900/50" : "bg-gray-800/50 border-gray-800 hover:bg-gray-800 hover:border-gray-700"
                 }`}
               >
                 <input 
                   type="checkbox" 
-                  className="w-5 h-5 rounded bg-gray-900 border-gray-700 text-red-600 focus:ring-red-600 focus:ring-offset-gray-900"
+                  className="w-5 h-5 mt-0.5 rounded bg-gray-900 border-gray-700 text-red-600 focus:ring-red-600 focus:ring-offset-gray-900"
                   checked={isDisabled}
-                  onChange={() => toggleTool(tool)}
+                  onChange={() => toggleTool(tool.id)}
                 />
-                <span className={`text-sm font-medium ${isDisabled ? "text-red-400" : "text-gray-300"}`}>
-                  {tool}
-                </span>
+                <div className="flex flex-col">
+                  <span className={`text-sm font-semibold ${isDisabled ? "text-red-400" : "text-gray-200"}`}>
+                    {tool.name}
+                  </span>
+                  <span className="text-xs text-gray-500 font-mono mt-0.5">
+                    {tool.id}
+                  </span>
+                </div>
               </label>
             );
           })}
