@@ -4,11 +4,19 @@ import { sql } from "@/lib/db";
 // Auto-migrate tables lazily (ignore if already exists)
 async function ensureColumns() {
   try {
-    await sql`ALTER TABLE devices ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20) UNIQUE`;
+    await sql`ALTER TABLE devices ADD COLUMN IF NOT EXISTS referral_code VARCHAR(20)`;
     await sql`ALTER TABLE devices ADD COLUMN IF NOT EXISTS referral_uses INTEGER DEFAULT 0`;
     await sql`ALTER TABLE devices ADD COLUMN IF NOT EXISTS has_claimed_referral BOOLEAN DEFAULT FALSE`;
   } catch (err) {
-    console.error("Migration error:", err);
+    console.error("Migration error (add columns):", err);
+  }
+
+  try {
+    await sql`ALTER TABLE devices ADD CONSTRAINT unique_referral_code UNIQUE (referral_code)`;
+  } catch (err: any) {
+    if (err.code !== '42710' && err.code !== '42P07') {
+      console.error("Migration error (constraint):", err);
+    }
   }
 }
 
