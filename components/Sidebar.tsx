@@ -132,6 +132,7 @@ const I = {
       <path d="M22 8.5C22 5.46 19.54 3 16.5 3S11 5.46 11 8.5c0 2.34 1.43 4.35 3.5 5.2V21l2-2 2 2v-7.3c2.07-.85 3.5-2.86 3.5-5.2z" strokeLinejoin="round" />
       <path d="M6 12H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h3l4 3V9l-4 3z" strokeLinejoin="round" />
     </svg>
+  ),
   Config: (
     <svg
       className="w-4 h-4"
@@ -154,21 +155,21 @@ type NavItem = {
 };
 
 const NAV: NavItem[] = [
-  { href: "/dashboard",        label: "Dashboard",         iconKey: "Dashboard" },
-  { href: "/devices",          label: "Perangkat",          iconKey: "Devices" },
-  { href: "/codes",            label: "Kode Lisensi",       iconKey: "Keys" },
-  { href: "/license-requests", label: "Request Lisensi",    iconKey: "Payment" },
-  { href: "/products",         label: "Produk & Jasa",      iconKey: "Products" },
-  { href: "/releases",         label: "Rilis Aplikasi",     iconKey: "Releases" },
-  { href: "/announcements",    label: "Pengumuman",         iconKey: "Announce" },
-  { href: "/payment-info",     label: "Info Pembayaran",    iconKey: "Payment" },
+  { href: "/dashboard", label: "Dashboard", iconKey: "Dashboard" },
+  { href: "/devices", label: "Perangkat", iconKey: "Devices" },
+  { href: "/codes", label: "Kode Lisensi", iconKey: "Keys" },
+  { href: "/license-requests", label: "Request Lisensi", iconKey: "Payment" },
+  { href: "/products", label: "Produk & Jasa", iconKey: "Products" },
+  { href: "/releases", label: "Rilis Aplikasi", iconKey: "Releases" },
+  { href: "/announcements", label: "Pengumuman", iconKey: "Announce" },
+  { href: "/payment-info", label: "Info Pembayaran", iconKey: "Payment" },
   {
     href: "/feature-requests",
     label: "Permintaan Fitur",
     iconKey: "Chat",
     badge: true,
   },
-  { href: "/tools-config",     label: "Konfigurasi Tool",   iconKey: "Config" },
+  { href: "/tools-config", label: "Konfigurasi Tool", iconKey: "Config" },
 ];
 
 export default function Sidebar() {
@@ -184,7 +185,7 @@ export default function Sidebar() {
         if (d?.unread_feature_requests) setUnread(d.unread_feature_requests);
         else setUnread(0);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [pathname]);
 
   async function logout() {
@@ -221,11 +222,10 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                active
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${active
                   ? "bg-brand-700/70 text-white shadow-sm"
                   : "text-gray-400 hover:bg-gray-800 hover:text-gray-100"
-              }`}
+                }`}
             >
               <span
                 className={`shrink-0 transition-colors ${active ? "text-brand-300" : "text-gray-500"}`}
