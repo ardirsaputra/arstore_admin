@@ -26,13 +26,13 @@ export async function PUT(req: NextRequest) {
 
     const [updated] = await sql`
       UPDATE payment_info SET
-        whatsapp     = ${whatsapp ?? null},
-        email        = ${email ?? null},
-        bank_name    = ${bank_name ?? null},
-        bank_account = ${bank_account ?? null},
-        bank_holder  = ${bank_holder ?? null},
-        qris_url     = ${qris_url ?? null},
-        note         = ${note ?? null},
+        whatsapp     = ${whatsapp || null},
+        email        = ${email || null},
+        bank_name    = ${bank_name || null},
+        bank_account = ${bank_account || null},
+        bank_holder  = ${bank_holder || null},
+        qris_url     = ${qris_url || null},
+        note         = ${note || null},
         updated_at   = NOW()
       WHERE id = 1
       RETURNING *
