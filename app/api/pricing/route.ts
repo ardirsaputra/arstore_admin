@@ -70,8 +70,9 @@ export async function GET() {
     const { rate, source } = await fetchUsdToIdr();
 
     const packages = BASE_PACKAGES.map(pkg => {
-      const priceIdr = roundIdr(pkg.priceUsd * rate);
-      const regularIdr = pkg.regularUsd ? roundIdr(pkg.regularUsd * rate) : null;
+      const safeRate = rate ?? FALLBACK_RATE_IDR;
+      const priceIdr = roundIdr(pkg.priceUsd * safeRate);
+      const regularIdr = pkg.regularUsd ? roundIdr(pkg.regularUsd * safeRate) : null;
       const saving = regularIdr ? Math.round((1 - priceIdr / regularIdr) * 100) : 0;
 
       return {
