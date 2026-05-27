@@ -19,7 +19,7 @@ let _cachedRate: number | null = null;
 let _cachedAt: number | null = null;
 let _rateSource = 'fallback';
 
-async function fetchUsdToIdr() {
+async function fetchUsdToIdr(): Promise<{ rate: number; source: string }> {
   if (_cachedRate && _cachedAt && Date.now() - _cachedAt < CACHE_DURATION_MS) {
     return { rate: _cachedRate, source: _rateSource };
   }
@@ -31,7 +31,7 @@ async function fetchUsdToIdr() {
       _cachedRate = json.rates.IDR;
       _cachedAt = Date.now();
       _rateSource = 'open.er-api.com';
-      return { rate: _cachedRate, source: _rateSource };
+      return { rate: _cachedRate as number, source: _rateSource };
     }
   } catch (_) {}
 
@@ -42,7 +42,7 @@ async function fetchUsdToIdr() {
       _cachedRate = json.rates.IDR;
       _cachedAt = Date.now();
       _rateSource = 'exchangerate.host';
-      return { rate: _cachedRate, source: _rateSource };
+      return { rate: _cachedRate as number, source: _rateSource };
     }
   } catch (_) {}
 
