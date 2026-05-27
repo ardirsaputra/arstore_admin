@@ -2,6 +2,7 @@ require("dotenv").config();
 const { sql } = require("./client");
 
 const defaultConfigs = {
+  disabled_tools: [],
   downloader_twitter_api: "https://api.fxtwitter.com/status/",
   downloader_cobalt_instances: [
     "https://api.cobalt.tools/",

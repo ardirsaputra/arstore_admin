@@ -22,8 +22,32 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Admin-only updates (optional for future, but manual SQL is also fine)
-// We only expose GET here since this is public. Admin updates will be done
-// via manual DB update or an admin panel route later.
+// PUT /api/app-config/:key
+// Admin-only updates
+const authMiddleware = require("../middleware/auth");
+router.put("/:key", authMiddleware, async (req, res) => {
+  try {
+    const { key } = req.params;
+    const { value } = req.body;
+    
+    if (value === undefined) {
+      return res.status(400).json({ message: "value is required" });
+    }
+
+    // Upsert the config key
+    await sql(
+      `INSERT INTO app_config (key, value, updated_at) 
+       VALUES ($1, $2, NOW()) 
+       ON CONFLICT (key) 
+       DO UPDATE SET value = $2, updated_at = NOW()`,
+      [key, JSON.stringify(value)]
+    );
+
+    res.json({ message: "Config updated successfully", key, value });
+  } catch (error) {
+    console.error("Error updating app config:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 module.exports = router;
