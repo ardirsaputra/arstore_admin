@@ -12,8 +12,7 @@ type Package = {
 };
 
 const BASE_PACKAGES: Package[] = [
-  { id: 'monthly',  months: 1,    priceUsd: 0.20,                   isPopular: false, isLifetime: false },
-  { id: '3months',  months: 3,    priceUsd: 0.50, regularUsd: 0.60, isPopular: false, isLifetime: false },
+  { id: '3months',  months: 3,    priceUsd: 0.60,                   isPopular: false, isLifetime: false },
   { id: '6months',  months: 6,    priceUsd: 1.00, regularUsd: 1.20, isPopular: false, isLifetime: false },
   { id: 'yearly',   months: 12,   priceUsd: 1.80, regularUsd: 2.40, isPopular: true,  isLifetime: false },
   { id: '18months', months: 18,   priceUsd: 2.50, regularUsd: 3.60, isPopular: false, isLifetime: false },
