@@ -66,20 +66,19 @@ export async function GET(req: NextRequest) {
     // Find the device
     const devices = await sql`SELECT * FROM devices WHERE device_id = ${deviceId}`;
 
-    // If device not yet registered (no trial started), generate a deterministic preview code
-    // This code won't be claimable until the device registers, but it shows something to the user.
-    if (devices.length === 0) {
-      const previewCode = deterministicCode(deviceId);
-      return NextResponse.json({
-        success: true,
-        referralCode: previewCode,
-        hasClaimedReferral: false,
-        isPreview: true, // Indicates device isn't registered yet
-      });
+    let currentDevices = devices;
+    if (currentDevices.length === 0) {
+      // Backward compatibility: Auto-register device if they haven't been registered yet
+      await sql`
+        INSERT INTO devices (device_id, status)
+        VALUES (${deviceId}, 'trial')
+        ON CONFLICT DO NOTHING
+      `;
+      currentDevices = await sql`SELECT * FROM devices WHERE device_id = ${deviceId}`;
     }
 
-    let code = devices[0].referral_code;
-    const hasClaimed = devices[0].has_claimed_referral;
+    let code = currentDevices[0].referral_code;
+    const hasClaimed = currentDevices[0].has_claimed_referral;
 
     if (!code) {
       // Generate a unique code and save to DB
@@ -123,9 +122,15 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Get the current device
-    const devices = await sql`SELECT * FROM devices WHERE device_id = ${deviceId}`;
+    let devices = await sql`SELECT * FROM devices WHERE device_id = ${deviceId}`;
     if (devices.length === 0) {
-      return NextResponse.json({ error: "Device not found" }, { status: 404 });
+      // Backward compatibility: Auto-register device to allow claiming
+      await sql`
+        INSERT INTO devices (device_id, status)
+        VALUES (${deviceId}, 'trial')
+        ON CONFLICT DO NOTHING
+      `;
+      devices = await sql`SELECT * FROM devices WHERE device_id = ${deviceId}`;
     }
     const currentDevice = devices[0];
 
