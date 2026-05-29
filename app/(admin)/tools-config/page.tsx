@@ -39,6 +39,8 @@ const AVAILABLE_TOOLS = [
   { id: "apk_extractor", name: "APK Extractor" },
   { id: "wifi_analyzer", name: "WiFi Analyzer" },
   { id: "info_hp", name: "Info Perangkat" },
+  { id: "volume_booster", name: "Volume Booster" },
+  { id: "network_lock", name: "Pengunci 4G/5G" },
   { id: "settings", name: "Pengaturan" }
 ];
 
