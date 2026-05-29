@@ -27,7 +27,7 @@ export default function ErrorLogsPage() {
   async function loadLogs() {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/error-logs");
+      const res = await fetch("/api/admin/error-logs", { cache: "no-store" });
       const data = await res.json();
       setLogs(Array.isArray(data) ? data : []);
     } catch (e) {
