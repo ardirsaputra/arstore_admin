@@ -77,7 +77,7 @@ export default function ErrorLogsPage() {
                     </div>
                     <div className="flex items-center gap-1.5 bg-gray-800/50 px-2 py-1 rounded-md">
                       <span className="text-gray-400">Device ID:</span>
-                      <span className="text-gray-300 font-mono">{log.device_id ? \`\${log.device_id.slice(0, 12)}...\` : "Unknown"}</span>
+                      <span className="text-gray-300 font-mono">{log.device_id ? `${log.device_id.slice(0, 12)}...` : "Unknown"}</span>
                     </div>
                     <div className="flex items-center gap-1.5 bg-gray-800/50 px-2 py-1 rounded-md">
                       <span className="text-gray-400">Waktu:</span>
