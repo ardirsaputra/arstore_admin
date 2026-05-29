@@ -41,15 +41,20 @@ export default function DevicesPage() {
   async function activate() {
     if (!selected) return;
     setActionLoading(true);
+
+    const isDate = expiryDate.includes("-");
+    const payload = {
+      permanent,
+      expiry_date: permanent ? undefined : (isDate && expiryDate ? expiryDate : undefined),
+      days: permanent ? undefined : (!isDate && expiryDate ? parseInt(expiryDate, 10) : undefined),
+    };
+
     await fetch(
       `/api/admin/devices/${encodeURIComponent(selected.device_id)}/activate`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          permanent,
-          expiry_date: permanent ? undefined : expiryDate || undefined,
-        }),
+        body: JSON.stringify(payload),
       },
     );
     setSelected(null);
@@ -186,16 +191,44 @@ export default function DevicesPage() {
             {!permanent && (
               <div className="mb-4">
                 <label className="block text-xs text-gray-400 mb-1">
-                  Tanggal kedaluwarsa
+                  Pilih Opsi Tambah Waktu
                 </label>
+                <div className="flex gap-2 text-sm text-gray-300 mb-2">
+                   <label className="flex items-center gap-1 cursor-pointer">
+                     <input type="radio" name="timeOpt" className="accent-brand-500" defaultChecked onChange={(e) => {
+                       if (e.target.checked) setExpiryDate("");
+                     }} /> Tambah Hari
+                   </label>
+                   <label className="flex items-center gap-1 cursor-pointer">
+                     <input type="radio" name="timeOpt" className="accent-brand-500" onChange={(e) => {
+                       if (e.target.checked) {
+                         const opt = document.getElementById("daysInput") as HTMLInputElement;
+                         if (opt) opt.value = "";
+                       }
+                     }} /> Set Tanggal
+                   </label>
+                </div>
+                
+                <input
+                  id="daysInput"
+                  type="number"
+                  min="1"
+                  placeholder="Jumlah Hari (Misal: 30)"
+                  onChange={(e) => setExpiryDate(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none mb-2"
+                />
+                
                 <input
                   type="date"
-                  value={expiryDate}
-                  onChange={(e) => setExpiryDate(e.target.value)}
+                  onChange={(e) => {
+                    setExpiryDate(e.target.value);
+                    const opt = document.getElementById("daysInput") as HTMLInputElement;
+                    if (opt) opt.value = "";
+                  }}
                   className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Kosongkan = 30 hari dari sekarang
+                  Isi salah satu. Kosong = +30 Hari.
                 </p>
               </div>
             )}
