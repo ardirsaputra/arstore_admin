@@ -16,36 +16,21 @@ async function main() {
 
   const sql = neon(process.env.DATABASE_URL);
 
-  // Run schema
-  const schemaPath = path.join(__dirname, "../backend/db/schema.sql");
-  if (!fs.existsSync(schemaPath)) {
-    console.error(`ERROR: Schema file not found at ${schemaPath}`);
-    return;
+  // Create admin_users table if it doesn't exist
+  console.log("⏳ Checking/creating admin_users table...");
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS admin_users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    console.log("✅ admin_users table ready");
+  } catch (e) {
+    console.warn("Warning creating admin_users table:", e.message);
   }
-
-  const schemaRaw = fs.readFileSync(schemaPath, "utf-8");
-  
-  // Strip single-line SQL comments before splitting
-  const statements = schemaRaw
-    .split("\n")
-    .map((line) => {
-      const idx = line.indexOf("--");
-      return idx === -1 ? line : line.slice(0, idx);
-    })
-    .join("\n")
-    .split(";")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
-
-  console.log("⏳ Running schema migrations...");
-  for (const stmt of statements) {
-    try {
-      await sql(stmt);
-    } catch (e) {
-      console.warn("Warning:", e.message);
-    }
-  }
-  console.log("✅ Schema berhasil dijalankan");
 
   // Create default admin user if provided
   const username = process.env.ADMIN_USERNAME || "admin";
