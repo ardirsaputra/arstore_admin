@@ -7,6 +7,7 @@ export default function DownloadPage() {
   const [releases, setReleases] = useState<AppRelease[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"features" | "changelog">("features");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/download")
@@ -218,19 +219,17 @@ export default function DownloadPage() {
               <h2 className="text-lg font-bold mb-4">Screenshot</h2>
               <div className="flex gap-3 overflow-x-auto pb-3">
                 {release.screenshots.map((url, i) => (
-                  <a
+                  <button
                     key={i}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
+                    onClick={() => setSelectedImage(url)}
+                    className="shrink-0 cursor-zoom-in"
                   >
                     <img
                       src={url}
                       alt={`Screenshot ${i + 1}`}
                       className="h-80 w-auto rounded-xl border border-gray-800 hover:border-brand-600 transition-colors"
                     />
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>
@@ -340,6 +339,29 @@ export default function DownloadPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Image Modal Lightbox */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 cursor-zoom-out"
+          onClick={() => setSelectedImage(null)}
+        >
+          <img 
+            src={selectedImage} 
+            alt="Screenshot diperbesar" 
+            className="max-w-full max-h-full object-contain rounded-xl" 
+          />
+          <button 
+            className="absolute top-6 right-6 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-xl transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedImage(null);
+            }}
+          >
+            ✕
+          </button>
         </div>
       )}
 
