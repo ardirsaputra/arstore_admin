@@ -7,7 +7,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   try {
-    await sql`UPDATE feature_requests SET read = TRUE WHERE id = ${id}`;
+    await sql`UPDATE feature_requests SET read = TRUE WHERE id = ${parseInt(id, 10)}`;
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Mark read error:", err);
