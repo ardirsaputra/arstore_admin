@@ -44,12 +44,23 @@ export async function PUT(req: NextRequest) {
     if (status === 'approved' && request.status !== 'approved') {
       const user = (await sql`SELECT * FROM app_users WHERE id = ${request.user_id}`)[0];
       
-      let newExpiry = new Date();
-      if (user.expiry_date && new Date(user.expiry_date) > new Date()) {
-        newExpiry = new Date(user.expiry_date);
+      let baseDate = new Date();
+      const trialDays = parseInt(process.env.TRIAL_DAYS ?? "30", 10);
+      const now = new Date();
+
+      if (user.expiry_date && new Date(user.expiry_date) > now) {
+        baseDate = new Date(user.expiry_date);
+      } else if (user.trial_start_date) {
+        const trialEnd = new Date(user.trial_start_date);
+        trialEnd.setDate(trialEnd.getDate() + trialDays);
+        if (trialEnd > now) {
+          baseDate = trialEnd;
+        }
       }
       
-      newExpiry.setMonth(newExpiry.getMonth() + request.requested_months);
+      const requestedDays = Number(request.requested_months) * 30;
+      let newExpiry = new Date(baseDate);
+      newExpiry.setDate(newExpiry.getDate() + requestedDays);
 
       await sql`
         UPDATE app_users 
