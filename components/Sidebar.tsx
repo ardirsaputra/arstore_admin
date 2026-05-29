@@ -169,6 +169,7 @@ const NAV: NavItem[] = [
     iconKey: "Chat",
     badge: true,
   },
+  { href: "/error-logs", label: "Error Logs", iconKey: "Config" },
   { href: "/users", label: "Pengguna", iconKey: "Config" },
   { href: "/tools-config", label: "Konfigurasi Tool", iconKey: "Config" },
 ];
