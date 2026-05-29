@@ -237,7 +237,7 @@ export default function ReleasesPage() {
                   </td>
                   <td className="px-4 py-3 text-gray-400">{r.version_code}</td>
                   <td className="px-4 py-3 text-gray-400">
-                    {new Date(r.release_date).toLocaleDateString("id-ID")}
+                    {new Date(r.release_date).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}
                   </td>
                   <td className="px-4 py-3 text-gray-400">
                     {r.file_size || "-"}

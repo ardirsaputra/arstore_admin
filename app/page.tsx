@@ -11,7 +11,7 @@ interface Contact {
 
 function formatPrice(price: number) {
   if (price === 0) return "Hubungi Kami";
-  return "Rp " + price.toLocaleString("id-ID");
+  return "Rp " + price.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
 }
 
 function ProductCard({ p, whatsapp }: { p: Product; whatsapp: string | null }) {

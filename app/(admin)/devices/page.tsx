@@ -131,7 +131,7 @@ export default function DevicesPage() {
                     {d.is_permanent
                       ? "Permanen"
                       : d.expiry_date
-                        ? new Date(d.expiry_date).toLocaleDateString("id-ID")
+                        ? new Date(d.expiry_date).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })
                         : "-"}
                   </td>
                   <td className="px-4 py-3 flex gap-2">

@@ -118,7 +118,7 @@ export default function FeatureRequestsPage() {
                     </svg>
                     {r.device_id ? `${r.device_id.slice(0, 16)}…` : "Anonim"}
                     <span className="text-gray-700">·</span>
-                    {new Date(r.created_at).toLocaleString("id-ID", {
+                    {new Date(r.created_at).toLocaleString("id-ID", { timeZone: "Asia/Jakarta", 
                       dateStyle: "medium",
                       timeStyle: "short",
                     })}

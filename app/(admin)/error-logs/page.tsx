@@ -113,7 +113,7 @@ export default function ErrorLogsPage() {
                     <div className="flex items-center gap-1.5 bg-gray-800/50 px-2 py-1 rounded-md">
                       <span className="text-gray-400">Waktu:</span>
                       <span className="text-gray-300">
-                        {new Date(log.created_at).toLocaleString("id-ID", {
+                        {new Date(log.created_at).toLocaleString("id-ID", { timeZone: "Asia/Jakarta", 
                           dateStyle: "medium",
                           timeStyle: "medium",
                         })}

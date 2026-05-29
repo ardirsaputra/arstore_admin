@@ -137,7 +137,7 @@ export default function CodesPage() {
                     {c.used_by_device_id ?? "-"}
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-400">
-                    {new Date(c.created_at).toLocaleDateString("id-ID")}
+                    {new Date(c.created_at).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}
                   </td>
                 </tr>
               ))}

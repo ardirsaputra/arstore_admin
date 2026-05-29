@@ -91,7 +91,7 @@ export default function DownloadPage() {
                     {release.min_android}
                   </span>
                   <span className="bg-gray-800 px-2 py-1 rounded">
-                    {new Date(release.release_date).toLocaleDateString("id-ID", {
+                    {new Date(release.release_date).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta", 
                       day: "numeric",
                       month: "long",
                       year: "numeric",
@@ -303,7 +303,7 @@ export default function DownloadPage() {
                     <div>
                       <h3 className="font-bold text-gray-200">v{old.version_name}</h3>
                       <p className="text-xs text-gray-400 mt-1">
-                        {new Date(old.release_date).toLocaleDateString("id-ID", {
+                        {new Date(old.release_date).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta", 
                           day: "numeric",
                           month: "long",
                           year: "numeric",

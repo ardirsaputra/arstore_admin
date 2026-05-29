@@ -116,7 +116,7 @@ export default function UsersPage() {
                     ) : "-"}
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-400">
-                    {u.expiry_date ? new Date(u.expiry_date).toLocaleDateString("id-ID") : "-"}
+                    {u.expiry_date ? new Date(u.expiry_date).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" }) : "-"}
                   </td>
                   <td className="px-4 py-3 text-right flex justify-end">
                     <button

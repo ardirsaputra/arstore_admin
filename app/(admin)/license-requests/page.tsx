@@ -101,7 +101,7 @@ export default function LicenseRequestsPage() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-500">
-                    {new Date(r.created_at).toLocaleString("id-ID")}
+                    {new Date(r.created_at).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`text-xs px-2 py-1 rounded font-medium ${

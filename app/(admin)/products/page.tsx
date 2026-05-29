@@ -159,7 +159,7 @@ export default function ProductsPage() {
                     {CATEGORY_LABEL[p.category] ?? p.category}
                   </td>
                   <td className="px-4 py-3">
-                    Rp {p.price.toLocaleString("id-ID")}
+                    Rp {p.price.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}
                   </td>
                   <td className="px-4 py-3 text-gray-400">
                     {p.duration || "-"}

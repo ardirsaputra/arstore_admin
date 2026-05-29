@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       `🚨 <b>Pengajuan Langganan Baru</b>\n\n` +
       `👤 <b>Pengguna:</b> ${user.email}\n` +
       `📦 <b>Paket:</b> ${requestedMonths} Bulan\n` +
-      `🕒 <b>Waktu:</b> ${new Date().toLocaleString('id-ID')}\n\n` +
+      `🕒 <b>Waktu:</b> ${new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })}\n\n` +
       `Silakan login ke dashboard admin untuk memeriksa bukti transfer dan menyetujui langganan ini.`;
     
     // Don't await if we want to return immediately

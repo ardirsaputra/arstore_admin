@@ -32,6 +32,13 @@ function emptyForm(): AnnouncementForm {
   };
 }
 
+function toWibDateTimeLocal(isoString: string): string {
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return "";
+  const wibTime = new Date(d.getTime() + 7 * 60 * 60 * 1000);
+  return wibTime.toISOString().slice(0, 16);
+}
+
 const TYPE_META: Record<string, { label: string; color: string; emoji: string }> = {
   info:    { label: "Info",      color: "text-blue-400 bg-blue-900/30",   emoji: "ℹ️" },
   warning: { label: "Peringatan", color: "text-yellow-400 bg-yellow-900/30", emoji: "⚠️" },
@@ -73,8 +80,8 @@ export default function AnnouncementsPage() {
       body: a.body,
       type: a.type,
       is_active: a.is_active,
-      starts_at: a.starts_at ? new Date(a.starts_at).toISOString().slice(0, 16) : "",
-      ends_at: a.ends_at ? new Date(a.ends_at).toISOString().slice(0, 16) : "",
+      starts_at: a.starts_at ? toWibDateTimeLocal(a.starts_at) : "",
+      ends_at: a.ends_at ? toWibDateTimeLocal(a.ends_at) : "",
     });
     setEditing(a.id);
     setError("");
@@ -92,8 +99,8 @@ export default function AnnouncementsPage() {
       body: form.body,
       type: form.type,
       is_active: form.is_active,
-      starts_at: form.starts_at || null,
-      ends_at: form.ends_at || null,
+      starts_at: form.starts_at ? `${form.starts_at}+07:00` : null,
+      ends_at: form.ends_at ? `${form.ends_at}+07:00` : null,
     };
 
     const res =
@@ -189,9 +196,9 @@ export default function AnnouncementsPage() {
                   </div>
                   <p className="text-xs text-gray-400 mt-1 line-clamp-2">{a.body}</p>
                   <div className="flex gap-3 mt-2 text-xs text-gray-600">
-                    <span>Dibuat: {new Date(a.created_at).toLocaleDateString("id-ID")}</span>
+                    <span>Dibuat: {new Date(a.created_at).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}</span>
                     {a.ends_at && (
-                      <span>Berakhir: {new Date(a.ends_at).toLocaleDateString("id-ID")}</span>
+                      <span>Berakhir: {new Date(a.ends_at).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}</span>
                     )}
                   </div>
                 </div>
