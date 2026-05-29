@@ -11,9 +11,13 @@ export async function GET() {
         app_version VARCHAR(255),
         error TEXT,
         stack_trace TEXT,
+        resolved BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+
+    // Add column if table already existed before this update
+    await sql`ALTER TABLE error_logs ADD COLUMN IF NOT EXISTS resolved BOOLEAN DEFAULT FALSE;`;
 
     // Fetch all logs ordered by newest first
     const logs = await sql`

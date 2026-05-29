@@ -3,6 +3,9 @@ import { sql } from "@/lib/db";
 
 export async function GET() {
   try {
+    // Ensure column exists to prevent 500 errors
+    await sql`ALTER TABLE feature_requests ADD COLUMN IF NOT EXISTS read BOOLEAN DEFAULT FALSE;`;
+    
     const rows =
       await sql`SELECT * FROM feature_requests ORDER BY created_at DESC LIMIT 200`;
     return NextResponse.json(rows);
