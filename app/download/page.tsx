@@ -4,20 +4,21 @@ import Link from "next/link";
 import type { AppRelease } from "@/lib/types";
 
 export default function DownloadPage() {
-  const [release, setRelease] = useState<AppRelease | null>(null);
+  const [releases, setReleases] = useState<AppRelease[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"features" | "changelog">(
-    "features",
-  );
+  const [activeTab, setActiveTab] = useState<"features" | "changelog">("features");
 
   useEffect(() => {
     fetch("/api/download")
       .then((r) => r.json())
       .then((data) => {
-        setRelease(data ?? null);
+        setReleases(Array.isArray(data) ? data : []);
         setLoading(false);
       });
   }, []);
+
+  const release = releases.length > 0 ? releases[0] : null;
+  const olderReleases = releases.slice(1);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -67,7 +68,7 @@ export default function DownloadPage() {
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               {/* App icon placeholder */}
               <div className="w-20 h-20 bg-brand-700 rounded-2xl flex items-center justify-center text-3xl shrink-0">
-                📱
+                <img src="https://ik.imagekit.io/ardirsaputra/ic_launcher.png" alt="" />
               </div>
 
               <div className="flex-1">
@@ -110,7 +111,7 @@ export default function DownloadPage() {
                     <span className="text-[10px] font-normal opacity-80 block -mt-1 leading-none">Untuk HP Modern</span>
                   </a>
                 )}
-                
+
                 {release.apk_url_arm32 && (
                   <a
                     href={release.apk_url_arm32}
@@ -165,11 +166,10 @@ export default function DownloadPage() {
                 {release.features.length > 0 && (
                   <button
                     onClick={() => setActiveTab("features")}
-                    className={`px-6 py-3.5 text-sm font-medium transition-colors ${
-                      activeTab === "features"
+                    className={`px-6 py-3.5 text-sm font-medium transition-colors ${activeTab === "features"
                         ? "border-b-2 border-brand-400 text-brand-400"
                         : "text-gray-400 hover:text-white"
-                    }`}
+                      }`}
                   >
                     Fitur Aplikasi
                   </button>
@@ -177,11 +177,10 @@ export default function DownloadPage() {
                 {release.changelog.length > 0 && (
                   <button
                     onClick={() => setActiveTab("changelog")}
-                    className={`px-6 py-3.5 text-sm font-medium transition-colors ${
-                      activeTab === "changelog"
+                    className={`px-6 py-3.5 text-sm font-medium transition-colors ${activeTab === "changelog"
                         ? "border-b-2 border-brand-400 text-brand-400"
                         : "text-gray-400 hover:text-white"
-                    }`}
+                      }`}
                   >
                     Changelog v{release.version_name}
                   </button>
@@ -264,7 +263,7 @@ export default function DownloadPage() {
                   <span className="text-[11px] font-normal opacity-70">Untuk HP Lama</span>
                 </a>
               )}
-              
+
               {release.apk_url_x86 && (
                 <a
                   href={release.apk_url_x86}
@@ -294,6 +293,53 @@ export default function DownloadPage() {
               {release.min_android} · Gratis
             </p>
           </div>
+
+          {/* Older releases section */}
+          {olderReleases.length > 0 && (
+            <div className="mt-16 pt-8 border-t border-gray-800">
+              <h2 className="text-xl font-bold mb-6">Versi Sebelumnya</h2>
+              <div className="space-y-4">
+                {olderReleases.map((old) => (
+                  <div key={old.id} className="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <h3 className="font-bold text-gray-200">v{old.version_name}</h3>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {new Date(old.release_date).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                        {old.file_size && ` · ${old.file_size}`}
+                        {` · ${old.min_android}`}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {old.apk_url_arm64 && (
+                        <a href={old.apk_url_arm64} target="_blank" rel="noopener noreferrer" className="text-xs bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors border border-gray-700">
+                          ARM64
+                        </a>
+                      )}
+                      {old.apk_url_arm32 && (
+                        <a href={old.apk_url_arm32} target="_blank" rel="noopener noreferrer" className="text-xs bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors border border-gray-700">
+                          ARM32
+                        </a>
+                      )}
+                      {old.apk_url_x86 && (
+                        <a href={old.apk_url_x86} target="_blank" rel="noopener noreferrer" className="text-xs bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors border border-gray-700">
+                          x86
+                        </a>
+                      )}
+                      {old.apk_url && (
+                        <a href={old.apk_url} target="_blank" rel="noopener noreferrer" className="text-xs bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded-lg transition-colors border border-gray-700">
+                          Universal
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

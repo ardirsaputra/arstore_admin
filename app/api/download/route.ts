@@ -38,12 +38,8 @@ export async function GET() {
       SELECT * FROM app_releases
       WHERE is_published = TRUE
       ORDER BY release_date DESC
-      LIMIT 1
     `;
-    if (rows.length === 0) {
-      return NextResponse.json(null);
-    }
-    return NextResponse.json(toReleaseJson(rows[0]));
+    return NextResponse.json(rows.map(toReleaseJson));
   } catch (err) {
     console.error("Get download error:", err);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
