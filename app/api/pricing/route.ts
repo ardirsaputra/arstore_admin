@@ -1,24 +1,9 @@
 import { NextResponse } from 'next/server';
+import { getActivePackages } from '@/lib/pricing';
 
-// ── Konfigurasi paket harga (nilai dalam USD) ────────────────────────────────
-
-type Package = {
-  id: string;
-  months: number | null;
-  priceUsd: number;
-  regularUsd?: number;
-  isPopular: boolean;
-  isLifetime: boolean;
-};
-
-const BASE_PACKAGES: Package[] = [
-  { id: '3months',  months: 3,    priceUsd: 0.60,                   isPopular: false, isLifetime: false },
-  { id: '6months',  months: 6,    priceUsd: 1.00, regularUsd: 1.20, isPopular: false, isLifetime: false },
-  { id: 'yearly',   months: 12,   priceUsd: 1.80, regularUsd: 2.40, isPopular: true,  isLifetime: false },
-  { id: '18months', months: 18,   priceUsd: 2.50, regularUsd: 3.60, isPopular: false, isLifetime: false },
-  { id: '2years',   months: 24,   priceUsd: 3.00, regularUsd: 4.80, isPopular: false, isLifetime: false },
-  { id: 'lifetime', months: null, priceUsd: 6.00,                   isPopular: false, isLifetime: true  },
-];
+// ── Konversi kurs USD→IDR (live, cache 6 jam) ───────────────────────────────
+// Paket harga (dalam USD) kini diatur dari admin panel via tabel pricing_packages.
+// Lihat lib/pricing.ts. Nilai IDR dihitung di sini memakai kurs live.
 
 const FALLBACK_RATE_IDR = 16500;
 const CACHE_DURATION_MS = 6 * 60 * 60 * 1000;
@@ -54,7 +39,7 @@ async function fetchUsdToIdr(): Promise<{ rate: number; source: string }> {
     }
   } catch (_) {}
 
-  // Return cached or fallback — _cachedRate is always a number (initialized to FALLBACK_RATE_IDR)
+  // Return cached or fallback — _cachedRate selalu number (diinisialisasi FALLBACK_RATE_IDR)
   return { rate: _cachedRate, source: 'fallback' };
 }
 
@@ -76,9 +61,12 @@ function formatIdr(amount: number): string {
 
 export async function GET() {
   try {
-    const { rate, source } = await fetchUsdToIdr();
+    const [{ rate, source }, basePackages] = await Promise.all([
+      fetchUsdToIdr(),
+      getActivePackages(),
+    ]);
 
-    const packages = BASE_PACKAGES.map((pkg) => {
+    const packages = basePackages.map((pkg) => {
       const priceIdr   = roundIdr(pkg.priceUsd * rate);
       const regularIdr = pkg.regularUsd ? roundIdr(pkg.regularUsd * rate) : null;
       const saving     = regularIdr ? Math.round((1 - priceIdr / regularIdr) * 100) : 0;

@@ -90,6 +90,21 @@ const I = {
       <line x1="1" y1="10" x2="23" y2="10" />
     </svg>
   ),
+  Pricing: (
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.75}
+    >
+      <path
+        d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"
+        strokeLinejoin="round"
+      />
+      <circle cx="7" cy="7" r="1.4" fill="currentColor" stroke="none" />
+    </svg>
+  ),
   Chat: (
     <svg
       className="w-4 h-4"
@@ -163,6 +178,7 @@ const NAV: NavItem[] = [
   { href: "/releases", label: "Rilis Aplikasi", iconKey: "Releases" },
   { href: "/announcements", label: "Pengumuman", iconKey: "Announce" },
   { href: "/payment-info", label: "Info Pembayaran", iconKey: "Payment" },
+  { href: "/pricing", label: "Harga Langganan", iconKey: "Pricing" },
   {
     href: "/feature-requests",
     label: "Permintaan Fitur",
