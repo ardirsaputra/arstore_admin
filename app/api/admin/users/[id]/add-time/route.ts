@@ -13,17 +13,30 @@ export async function POST(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { days } = body;
+    const { days, permanent } = body;
 
-    if (!days || typeof days !== "number" || days <= 0) {
-      return NextResponse.json({ error: "Jumlah hari tidak valid" }, { status: 400 });
-    }
+    // Pastikan kolom lifetime ada (aman dijalankan berulang).
+    await sql`ALTER TABLE app_users ADD COLUMN IF NOT EXISTS is_permanent BOOLEAN DEFAULT FALSE`;
 
     const rows = await sql`SELECT * FROM app_users WHERE id = ${id}`;
     if (rows.length === 0) {
       return NextResponse.json({ error: "Pengguna tidak ditemukan" }, { status: 404 });
     }
     const user = rows[0];
+
+    // Lifetime sejati: tanpa tanggal kedaluwarsa.
+    if (permanent === true) {
+      await sql`
+        UPDATE app_users
+        SET status = 'active', is_permanent = TRUE, expiry_date = NULL
+        WHERE id = ${id}
+      `;
+      return NextResponse.json({ success: true, permanent: true });
+    }
+
+    if (!days || typeof days !== "number" || days <= 0) {
+      return NextResponse.json({ error: "Jumlah hari tidak valid" }, { status: 400 });
+    }
 
     let baseDate = new Date();
     const trialDays = parseInt(process.env.TRIAL_DAYS ?? "30", 10);
@@ -39,12 +52,13 @@ export async function POST(
       }
     }
 
-    let newExpiry = new Date(baseDate);
+    const newExpiry = new Date(baseDate);
     newExpiry.setDate(newExpiry.getDate() + days);
 
+    // Timed → pastikan bukan lifetime.
     await sql`
-      UPDATE app_users 
-      SET status = 'active', expiry_date = ${newExpiry.toISOString()}
+      UPDATE app_users
+      SET status = 'active', is_permanent = FALSE, expiry_date = ${newExpiry.toISOString()}
       WHERE id = ${id}
     `;
 

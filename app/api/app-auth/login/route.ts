@@ -36,7 +36,8 @@ export async function POST(req: NextRequest) {
         email: user.email,
         status: user.status,
         trialStartDate: user.trial_start_date,
-        expiryDate: user.expiry_date,
+        expiryDate: user.is_permanent === true ? null : user.expiry_date,
+        isPermanent: user.is_permanent === true,
         activeDeviceId: user.active_device_id,
       },
     });

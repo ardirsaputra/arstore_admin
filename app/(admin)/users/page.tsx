@@ -8,6 +8,7 @@ type User = {
   active_device_id: string | null;
   trial_start_date: string | null;
   expiry_date: string | null;
+  is_permanent?: boolean;
   created_at: string;
 };
 
@@ -52,6 +53,28 @@ export default function UsersPage() {
     } else {
       const err = await res.json();
       alert("Gagal menambah waktu: " + (err.error || "Unknown error"));
+    }
+    setActionLoading(false);
+  }
+
+  async function handleGrantLifetime() {
+    if (!selectedUser) return;
+    if (!confirm(`Jadikan akun ${selectedUser.email} LIFETIME (permanen, tanpa kedaluwarsa)?`)) return;
+    setActionLoading(true);
+
+    const res = await fetch(`/api/admin/users/${selectedUser.id}/add-time`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ permanent: true }),
+    });
+
+    if (res.ok) {
+      setSelectedUser(null);
+      setDays("");
+      loadUsers();
+    } else {
+      const err = await res.json();
+      alert("Gagal menjadikan lifetime: " + (err.error || "Unknown error"));
     }
     setActionLoading(false);
   }
@@ -102,13 +125,19 @@ export default function UsersPage() {
                     {u.email}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded font-medium ${
-                      u.status === 'active' ? 'bg-green-900/30 text-green-400' :
-                      u.status === 'trial' ? 'bg-yellow-900/30 text-yellow-400' :
-                      'bg-red-900/30 text-red-400'
-                    }`}>
-                      {u.status ? u.status.toUpperCase() : "UNKNOWN"}
-                    </span>
+                    {u.is_permanent ? (
+                      <span className="text-xs px-2 py-1 rounded font-medium bg-purple-900/30 text-purple-400">
+                        LIFETIME
+                      </span>
+                    ) : (
+                      <span className={`text-xs px-2 py-1 rounded font-medium ${
+                        u.status === 'active' ? 'bg-green-900/30 text-green-400' :
+                        u.status === 'trial' ? 'bg-yellow-900/30 text-yellow-400' :
+                        'bg-red-900/30 text-red-400'
+                      }`}>
+                        {u.status ? u.status.toUpperCase() : "UNKNOWN"}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-gray-400">
                     {u.active_device_id ? (
@@ -116,7 +145,9 @@ export default function UsersPage() {
                     ) : "-"}
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-400">
-                    {u.expiry_date ? new Date(u.expiry_date).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" }) : "-"}
+                    {u.is_permanent
+                      ? <span className="text-purple-400 font-semibold">Selamanya ♾️</span>
+                      : u.expiry_date ? new Date(u.expiry_date).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" }) : "-"}
                   </td>
                   <td className="px-4 py-3 text-right flex justify-end">
                     <button
@@ -173,6 +204,19 @@ export default function UsersPage() {
               >
                 Batal
               </button>
+            </div>
+
+            <div className="mt-3 pt-3 border-t border-gray-800">
+              <button
+                onClick={handleGrantLifetime}
+                disabled={actionLoading}
+                className="w-full bg-purple-700 hover:bg-purple-600 text-white py-2 rounded-lg text-sm disabled:opacity-50"
+              >
+                {actionLoading ? "Memproses..." : "♾️ Jadikan Lifetime (Permanen)"}
+              </button>
+              <p className="text-[11px] text-gray-500 mt-1 text-center">
+                Akses selamanya, tanpa tanggal kedaluwarsa.
+              </p>
             </div>
           </div>
         </div>

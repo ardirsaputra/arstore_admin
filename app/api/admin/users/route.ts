@@ -8,8 +8,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    // Pastikan kolom lifetime ada agar SELECT tidak gagal sebelum migrasi.
+    await sql`ALTER TABLE app_users ADD COLUMN IF NOT EXISTS is_permanent BOOLEAN DEFAULT FALSE`;
     const users = await sql`
-      SELECT id, email, status, active_device_id, trial_start_date, expiry_date, created_at
+      SELECT id, email, status, active_device_id, trial_start_date, expiry_date, is_permanent, created_at
       FROM app_users
       ORDER BY created_at DESC
     `;

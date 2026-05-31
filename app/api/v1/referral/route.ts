@@ -96,10 +96,18 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Bonus hari trial yang diperoleh perangkat ini:
+    //  +7 hari bila sudah mengklaim kode orang lain,
+    //  +7 hari untuk setiap orang yang memakai kode kita (referral_uses).
+    // Aplikasi menerapkan bonus ini ke masa trial lokal (offline-first).
+    const usesGet = Number(currentDevices[0].referral_uses ?? 0);
+    const bonusDays = (hasClaimed ? 7 : 0) + usesGet * 7;
+
     return NextResponse.json({
       success: true,
       referralCode: code,
       hasClaimedReferral: hasClaimed,
+      bonusDays,
     });
   } catch (error: any) {
     console.error("GET Referral Error:", error);
@@ -154,28 +162,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Referral code has reached maximum usage limit." }, { status: 400 });
     }
 
-    // 5. Apply the bonus (7 days to both)
-    // Add +7 days to current device (claimer)
-    await sql`
-      UPDATE devices 
-      SET 
-        has_claimed_referral = TRUE,
-        trial_start_date = trial_start_date + INTERVAL '7 days',
-        expiry_date = COALESCE(expiry_date, NOW()) + INTERVAL '7 days'
-      WHERE device_id = ${deviceId}
-    `;
+    // 5. Catat bonus (+7 hari untuk masing-masing) lewat counter.
+    //    Aplikasi menerapkan bonus ke masa trial lokal via field `bonusDays`,
+    //    sehingga berlaku untuk perangkat trial yang BELUM login sekalipun.
+    // Claimer: tandai sudah klaim.
+    await sql`UPDATE devices SET has_claimed_referral = TRUE WHERE device_id = ${deviceId}`;
+    // Owner: tambah jumlah pemakaian kode.
+    await sql`UPDATE devices SET referral_uses = referral_uses + 1 WHERE device_id = ${ownerDevice.device_id}`;
 
-    // Add +7 days to owner device and increment usage
-    await sql`
-      UPDATE devices 
-      SET 
-        referral_uses = referral_uses + 1,
-        trial_start_date = trial_start_date + INTERVAL '7 days',
-        expiry_date = COALESCE(expiry_date, NOW()) + INTERVAL '7 days'
-      WHERE device_id = ${ownerDevice.device_id}
-    `;
+    // Total bonus claimer = 7 (klaim) + 7 × jumlah orang yang sudah pakai kodenya.
+    const claimerUses = Number(currentDevice.referral_uses ?? 0);
+    const bonusDays = 7 + claimerUses * 7;
 
-    return NextResponse.json({ success: true, message: "Referral successfully claimed! +7 days added." });
+    return NextResponse.json({
+      success: true,
+      message: "Referral successfully claimed! +7 days added.",
+      bonusDays,
+    });
   } catch (error: any) {
     console.error("POST Referral Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

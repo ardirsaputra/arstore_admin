@@ -24,10 +24,12 @@ export async function GET(req: NextRequest) {
     }
     
     const user = users[0];
-    
-    // Check if expiry date has passed
+
+    const isPermanent = user.is_permanent === true;
+
+    // Lifetime tidak pernah kadaluarsa; selain itu cek tanggal expiry.
     let currentStatus = user.status;
-    if (user.expiry_date && new Date(user.expiry_date) < new Date()) {
+    if (!isPermanent && user.expiry_date && new Date(user.expiry_date) < new Date()) {
       currentStatus = 'expired';
     }
 
@@ -40,7 +42,8 @@ export async function GET(req: NextRequest) {
         email: user.email,
         status: currentStatus,
         trialStartDate: user.trial_start_date,
-        expiryDate: user.expiry_date,
+        expiryDate: isPermanent ? null : user.expiry_date,
+        isPermanent,
         activeDeviceId: user.active_device_id,
         isActiveDevice,
       },

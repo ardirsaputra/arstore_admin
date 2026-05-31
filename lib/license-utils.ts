@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-const TRIAL_DAYS = parseInt(process.env.TRIAL_DAYS ?? "14", 10);
+const TRIAL_DAYS = parseInt(process.env.TRIAL_DAYS ?? "30", 10);
 
 // ── App request signature validation ─────────────────────────────────────────
 // Flutter app signs each request with:
